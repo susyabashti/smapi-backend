@@ -14,12 +14,6 @@ const conn = mysql.createConnection({
   database: process.env.DB,
 });
 
-conn.connect((err) => {
-  if (err) throw err;
-
-  console.log("connected successfully to mysql db.");
-});
-
 // Retrieve all products
 app.get("/api/products/", (req, res) => {
   // Non prepared statement.
@@ -50,6 +44,14 @@ app.get("/api/products/:name", (req, res) => {
   );
 });
 
-httpServer.listen(3001, () => {
-  console.log("Server is running on port 3001");
+httpServer.listen(process.env.PORT, () => {
+  console.log("Application is served at port: " + process.env.PORT);
+
+  conn.connect((err) => {
+    if (err) throw err;
+
+    console.log(
+      "Application has successfully connected itself to MySQL Server."
+    );
+  });
 });

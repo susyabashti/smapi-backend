@@ -25,6 +25,7 @@ price - float 24
 
 const schema = {
     name: {
+        in: ["body"],
         errorMessage: "The name you entered is not valid.",
         escape: true,
         trim: true,
@@ -33,9 +34,17 @@ const schema = {
         },
     },
     price: {
+        in: ["body"],
         errorMessage: "The price you entered is not valid.",
         isNumeric: true,
         toFloat: true,
+    },
+    key_auth: {
+        in: ["headers"],
+        errorMessage: "Invalid authorization key.",
+        custom: {
+            options: (value) => value == process.env.SECRET_AUTH,
+        },
     },
 };
 
@@ -43,7 +52,7 @@ const schema = {
 app.get("/api/products/", (req, res) => {
     pool.execute("SELECT * FROM `products`;")
         .then(([rows]) => res.send(rows))
-        .catch(() => res.sendStatus(500));
+        .catch((err) => res.status(500).json(err));
 });
 
 // Retrieve specific product
@@ -55,11 +64,11 @@ app.get("/api/products/:name", (req, res) => {
         [name]
     )
         .then(([rows]) => res.json(rows))
-        .catch(() => res.sendStatus(500));
+        .catch((err) => res.status(500).json(err));
 });
 
 // Add Product
-app.post("/api/products/", checkSchema(schema, ["body"]), (req, res) => {
+app.post("/api/products/", checkSchema(schema), (req, res) => {
     const result = validationResult(req);
     if (!result.isEmpty()) {
         return res.status(400).json({ errors: result.array() });

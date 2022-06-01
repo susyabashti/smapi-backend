@@ -13,12 +13,7 @@ const httpServer = createServer(app);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const pool = mysql.createPool({
-    host: process.env.HOST,
-    user: process.env.USER,
-    password: process.env.PASSWORD,
-    database: process.env.DB,
-});
+const pool = mysql.createPool(process.env.DATABASE_URL);
 
 /* TABLE STRUCTURE
 

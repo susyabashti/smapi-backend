@@ -51,7 +51,13 @@ const schema = {
 app.get("/api/products/", (req, res) => {
     pool.execute("SELECT * FROM `products`;")
         .then(([rows]) => res.send(rows))
-        .catch((err) => res.status(500).json(err));
+        .catch(() =>
+            res.status(500).json({
+                errors: {
+                    msg: "An error occured while trying to fetch products.",
+                },
+            })
+        );
 });
 
 // Retrieve specific product
@@ -63,7 +69,13 @@ app.get("/api/products/:name", (req, res) => {
         [name]
     )
         .then(([rows]) => res.json(rows))
-        .catch((err) => res.status(500).json(err));
+        .catch(() =>
+            res.status(500).json({
+                errors: {
+                    msg: "An error occured while trying to fetch products.",
+                },
+            })
+        );
 });
 
 // Add Product
@@ -94,7 +106,9 @@ app.post("/api/products/", checkSchema(schema), (req, res) => {
                 });
             } else {
                 res.status(500).json({
-                    msg: "An error occured while trying to add a new product.",
+                    errors: {
+                        msg: "An error occured while trying to add a new product.",
+                    },
                 });
             }
         });

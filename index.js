@@ -53,9 +53,7 @@ app.get("/api/products/", (req, res) => {
         .then(([rows]) => res.send(rows))
         .catch(() =>
             res.status(500).json({
-                errors: {
-                    msg: "An error occured while trying to fetch products.",
-                },
+                msg: "An error occured while trying to fetch products.",
             })
         );
 });
@@ -71,9 +69,7 @@ app.get("/api/products/:name", (req, res) => {
         .then(([rows]) => res.json(rows))
         .catch(() =>
             res.status(500).json({
-                errors: {
-                    msg: "An error occured while trying to fetch products.",
-                },
+                msg: "An error occured while trying to fetch products.",
             })
         );
 });
@@ -82,7 +78,7 @@ app.get("/api/products/:name", (req, res) => {
 app.post("/api/products/", checkSchema(schema), (req, res) => {
     const result = validationResult(req);
     if (!result.isEmpty()) {
-        return res.status(400).json({ errors: result.array() });
+        return res.status(400).json({ msg: result.errors[0].msg });
     }
 
     const name = req.body.name;
@@ -100,15 +96,11 @@ app.post("/api/products/", checkSchema(schema), (req, res) => {
         .catch((err) => {
             if (err.code == "ER_DUP_ENTRY") {
                 res.status(400).json({
-                    errors: {
-                        msg: "A product already exists with that name.",
-                    },
+                    msg: "A product already exists with that name.",
                 });
             } else {
                 res.status(500).json({
-                    errors: {
-                        msg: "An error occured while trying to add a new product.",
-                    },
+                    msg: "An error occured while trying to add a new product.",
                 });
             }
         });

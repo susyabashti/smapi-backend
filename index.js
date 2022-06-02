@@ -39,13 +39,13 @@ const schema = {
         isNumeric: true,
         toFloat: true,
     },
-    key_auth: {
-        in: ["headers"],
-        errorMessage: "Invalid authorization key.",
-        custom: {
-            options: (value) => value == process.env.SECRET_AUTH,
-        },
-    },
+    // key_auth: {
+    //     in: ["headers"],
+    //     errorMessage: "Invalid authorization key.",
+    //     custom: {
+    //         options: (value) => value == process.env.SECRET_AUTH,
+    //     },
+    // },
 };
 
 // Retrieve all products

@@ -29,7 +29,7 @@ const schema = {
         escape: true,
         trim: true,
         custom: {
-            options: (value) => value.match(/^[A-Za-z ]+$/),
+            options: (value) => value.match(/^[A-Za-z \d]+$/),
         },
     },
     price: {
@@ -50,10 +50,11 @@ const schema = {
 // Retrieve all products
 app.get("/api/products/", (req, res) => {
     pool.execute("SELECT * FROM `products`;")
-        .then(([rows]) => res.send(rows))
+        .then(([rows]) => res.status(200).send(rows))
         .catch(() =>
-            res.status(500).json({
+            res.status(202).json({
                 msg: "An error occured while trying to fetch products.",
+                status: 202,
             })
         );
 });
@@ -66,10 +67,11 @@ app.get("/api/products/:name", (req, res) => {
         "SELECT * FROM `products` WHERE `name` like CONCAT( '%', ?, '%');",
         [name]
     )
-        .then(([rows]) => res.json(rows))
+        .then(([rows]) => res.status(200).json(rows))
         .catch(() =>
-            res.status(500).json({
+            res.status(202).json({
                 msg: "An error occured while trying to fetch products.",
+                status: 202,
             })
         );
 });
@@ -78,7 +80,10 @@ app.get("/api/products/:name", (req, res) => {
 app.post("/api/products/", checkSchema(schema), (req, res) => {
     const result = validationResult(req);
     if (!result.isEmpty()) {
-        return res.status(400).json({ msg: result.errors[0].msg });
+        return res.status(202).json({
+            msg: result.errors[0].msg,
+            status: 202,
+        });
     }
 
     const name = req.body.name;
@@ -91,16 +96,19 @@ app.post("/api/products/", checkSchema(schema), (req, res) => {
         .then(() =>
             res.status(200).json({
                 msg: "Product added successfully.",
+                status: 200,
             })
         )
         .catch((err) => {
             if (err.code == "ER_DUP_ENTRY") {
-                res.status(400).json({
+                res.status(202).json({
                     msg: "A product already exists with that name.",
+                    status: 202,
                 });
             } else {
-                res.status(500).json({
+                res.status(202).json({
                     msg: "An error occured while trying to add a new product.",
+                    status: 202,
                 });
             }
         });

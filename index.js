@@ -11,7 +11,6 @@ require("dotenv").config();
 const app = express();
 const httpServer = createServer(app);
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
 
 const pool = mysql.createPool(process.env.DATABASE_URL);
 

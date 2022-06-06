@@ -3,6 +3,7 @@ const mysql = require("mysql2/promise");
 const { createServer } = require("http");
 const { validationResult, checkSchema } = require("express-validator");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 
 // ENV CONFIGURATION
 require("dotenv").config();
@@ -11,6 +12,7 @@ require("dotenv").config();
 const app = express();
 const httpServer = createServer(app);
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
 
 const pool = mysql.createPool(process.env.DATABASE_URL);
 
